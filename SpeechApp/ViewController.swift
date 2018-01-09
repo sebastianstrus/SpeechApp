@@ -23,13 +23,15 @@ class ViewController: UIViewController {
     var timer = Timer()
     var timerForRed = Timer()
     
-    
+    var titleLabel: UILabel!
     var blackView: UIView!
+    var redLineView: UIImageView!
     var redView: UIView!
     
     let audioEngine = AVAudioEngine()
-    let speechRecognizer: SFSpeechRecognizer? = SFSpeechRecognizer()
-    //let speechRecognizer: SFSpeechRecognizer(locale: Locale.init(identifier: "en-US"))
+    //let speechRecognizer: SFSpeechRecognizer? = SFSpeechRecognizer()
+    //let speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: "en-US"))
+    let speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: "sv-SE"))
     let request = SFSpeechAudioBufferRecognitionRequest()
     var recognitionTask: SFSpeechRecognitionTask?
     
@@ -45,11 +47,26 @@ class ViewController: UIViewController {
         blackView.backgroundColor = UIColor.black
         self.view.addSubview(blackView)
         
+        
+        titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: 60))
+        titleLabel.center = CGPoint(x: screenSize.width/2, y: 180)
+        titleLabel.textAlignment = .center
+        titleLabel.text = "Speech Recognizer"
+        titleLabel.font = UIFont(name: titleLabel.font.fontName, size: 30)
+        titleLabel.textColor = .red
+        self.view.addSubview(titleLabel)
+        
+        //Allows QuickTime Player record the screen, it can't be whole black
+        var redlineImage: UIImage = UIImage(named: "redline")!
+        redLineView = UIImageView(image: redlineImage)
+        redLineView.frame = CGRect(x: 0, y: 250, width: (screenSize.width), height: (100))
+        self.view.addSubview(redLineView)
+        
         redView = UIView(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: screenSize.height))
         redView.backgroundColor = UIColor.red
         
         instructionLabel = UILabel(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: 100))
-        instructionLabel.center = CGPoint(x: screenSize.width/2, y: screenSize.height/2 + 50)
+        instructionLabel.center = CGPoint(x: screenSize.width/2, y: screenSize.height/2 + 180)
         instructionLabel.textAlignment = .center
         instructionLabel.numberOfLines = 0;
         instructionLabel.text = "Say password to \ndeactivate the alarm."
@@ -57,7 +74,7 @@ class ViewController: UIViewController {
         instructionLabel.textColor = UIColor.white
         
         countingLabel = UILabel(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: screenSize.height))
-        countingLabel.center = CGPoint(x: screenSize.width/2, y: screenSize.height/2 - 50)
+        countingLabel.center = CGPoint(x: screenSize.width/2, y: screenSize.height/2 + 80)
         countingLabel.textAlignment = .center
         countingLabel.numberOfLines = 0;
         countingLabel.text = "\(counting)"
@@ -94,6 +111,7 @@ class ViewController: UIViewController {
             if let result = result {
                 let bestString = result.bestTranscription.formattedString
                 self.detectTextLabel.text = bestString
+                print("bestString: \(bestString)")
             } else if let error = error {
                 print(error)
             }
