@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     var instructionLabel: UILabel!
     var countingLabel: UILabel!
     
-    var timer = Timer()
+    //var timer = Timer()
     var timerForRed = Timer()
     
     var titleLabel: UILabel!
@@ -38,6 +38,14 @@ class ViewController: UIViewController {
     var counting = 10
     var i = 0
     var alarmActivated = false
+    
+    var detectedText = "" {
+        didSet {
+            print("changed!")
+            detectTextLabel.text = detectedText
+            alarmActivated ? checkStop() : checkStart()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,10 +89,10 @@ class ViewController: UIViewController {
         countingLabel.font = instructionLabel.font.withSize(100)
         countingLabel.textColor = UIColor.white
         
-        timer = Timer.scheduledTimer(timeInterval: 0.4, target: self, selector: #selector(self.checkStart), userInfo: nil, repeats: true)
+        //timer = Timer.scheduledTimer(timeInterval: 0.4, target: self, selector: #selector(checkStart), userInfo: nil, repeats: true)
         
         
-        guard let node = audioEngine.inputNode else { return }
+        let node = audioEngine.inputNode
         let recordingFormat = node.outputFormat(forBus: 0)
         node.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
             self.request.append(buffer)
@@ -110,7 +118,7 @@ class ViewController: UIViewController {
         recognitionTask = speechRecognizer?.recognitionTask(with: request, resultHandler: { result, error in
             if let result = result {
                 let bestString = result.bestTranscription.formattedString
-                self.detectTextLabel.text = bestString
+                self.detectedText = bestString
                 print("bestString: \(bestString)")
             } else if let error = error {
                 print(error)
@@ -131,33 +139,33 @@ class ViewController: UIViewController {
     
     
     // must be internal or public.
-    func checkStart() {
+    @objc func checkStart() {
         if !alarmActivated {
-            let string = detectTextLabel.text?.lowercased()
+            let string = detectedText.lowercased()
             
-            if string?.range(of:"hjälp") != nil {
+            if string.range(of:"hjälp") != nil {
                 print("activated!!!")
                 activateAlarm()
-                detectTextLabel.text = ""
+                detectedText = ""
                 self.alarmActivated = true
-                timer.invalidate()
-                timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.checkStop), userInfo: nil, repeats: true)
+                //timer.invalidate()
+                //timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.checkStop), userInfo: nil, repeats: true)
             }
         }
         i += 1
         print("Checking hjälp: \(i)")
     }
     
-    func checkStop() {
+    @objc func checkStop() {
         if alarmActivated {
-            let string = detectTextLabel.text
+            let string = detectedText
             
-            if string?.range(of:"123") != nil {
+            if string.range(of:"123") != nil {
                 print("stopped!!!")
-                detectTextLabel.text = ""
+                detectedText = ""
                 stopAlarm()
                 self.alarmActivated = false
-                timer.invalidate()
+                //timer.invalidate()
                 //timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.checkStart), userInfo: nil, repeats: true)
             }
         }
@@ -176,7 +184,7 @@ class ViewController: UIViewController {
         
     }
     
-    func toggleRedView() {
+    @objc func toggleRedView() {
         if self.counting > 0 {
             UIView.animate(withDuration: 0.45,
                            animations: {
@@ -222,17 +230,3 @@ class ViewController: UIViewController {
         return true
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
