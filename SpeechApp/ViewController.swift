@@ -65,7 +65,7 @@ class ViewController: UIViewController {
         self.view.addSubview(titleLabel)
         
         //Allows QuickTime Player record the screen, it can't be whole black
-        var redlineImage: UIImage = UIImage(named: "redline")!
+        let redlineImage: UIImage = UIImage(named: "redline")!
         redLineView = UIImageView(image: redlineImage)
         redLineView.frame = CGRect(x: 0, y: 250, width: (screenSize.width), height: (100))
         self.view.addSubview(redLineView)
