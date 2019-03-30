@@ -11,6 +11,7 @@ import Speech
 
 class ViewController: UIViewController {
 
+    // TODO: refactor
     
     @IBOutlet weak var detectTextLabel: UILabel!
     @IBOutlet weak var colorView: UIView!
@@ -25,7 +26,7 @@ class ViewController: UIViewController {
     
     var titleLabel: UILabel!
     var blackView: UIView!
-    var redLineView: UIImageView!
+    var onTopView: UIImageView!
     var redView: UIView!
     
     let audioEngine = AVAudioEngine()
@@ -56,19 +57,27 @@ class ViewController: UIViewController {
         self.view.addSubview(blackView)
         
         
-        titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: 60))
+        titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: 120))
         titleLabel.center = CGPoint(x: screenSize.width/2, y: 180)
         titleLabel.textAlignment = .center
-        titleLabel.text = "Speech Recognizer"
-        titleLabel.font = UIFont(name: titleLabel.font.fontName, size: 30)
-        titleLabel.textColor = .red
+        titleLabel.text = "Speech\nRecognizer"
+        titleLabel.numberOfLines = 2
+        
+        titleLabel.layer.shadowColor = UIColor.green.cgColor
+        titleLabel.layer.shadowRadius = 3.0
+        titleLabel.layer.shadowOpacity = 1.0
+        titleLabel.layer.shadowOffset = CGSize(width: 3, height: 3)
+        titleLabel.layer.masksToBounds = false
+        
+        titleLabel.font = UIFont(name: titleLabel.font.fontName, size: 50)
+        titleLabel.textColor = .green
         self.view.addSubview(titleLabel)
         
         //Allows QuickTime Player record the screen, it can't be whole black
-        let redlineImage: UIImage = UIImage(named: "redline")!
-        redLineView = UIImageView(image: redlineImage)
-        redLineView.frame = CGRect(x: 0, y: 250, width: (screenSize.width), height: (100))
-        self.view.addSubview(redLineView)
+        let image: UIImage = UIImage(named: "sound_track")!
+        onTopView = UIImageView(image: image)
+        onTopView.frame = CGRect(x: 0, y: 250, width: (screenSize.width), height: (300))
+        self.view.addSubview(onTopView)
         
         redView = UIView(frame: CGRect(x: 0, y: 0, width: screenSize.width, height: screenSize.height))
         redView.backgroundColor = UIColor.red
